@@ -34,6 +34,31 @@ if ($RC_ERROR) {
 	exit(1);
 }
 
+if(getenv('RC_ENABLE_INSTALLER') &&
+    ($root_pass = getenv("DB_ROOT_PASS"))
+)
+{
+        $db = getenv("RC_DB_NAME");
+
+        $conn = new mysqli(getenv("RC_DB_HOST"), "root", $root_pass);
+
+        if ($conn->connect_error) {
+            print("Connection failed: " . $conn->connect_error);
+            exit(1);
+        }
+
+        $res = $conn->query("CREATE DATABASE IF NOT EXISTS " . $db)
+            && $conn->query("GRANT ALL PRIVILEGES ON `${db}`.* TO '" . getenv("RC_DB_USER") ."'@'%' WITH GRANT OPTION")
+            && $conn->query("FLUSH PRIVILEGES");
+
+        $conn->close();
+
+        if (!$res) {
+            print("DB error: " . $conn->error);
+            exit(1);
+        }
+}
+
 
 $config = array();
 
@@ -106,7 +131,7 @@ $config['plugins'] = array(
 // skin name: folder from skins/
 $config['skin'] = 'elastic';
 
-$config['enable_installer'] = false;
+$config['enable_installer'] = boolval(getenv('RC_ENABLE_INSTALLER'));
 
 if ($_ENV['RC_DEFAULT_DOMAIN']) {
 	$config['username_domain'] = $_ENV['RC_DEFAULT_DOMAIN'];
