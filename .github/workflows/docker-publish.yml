@@ -55,4 +55,4 @@ jobs:
           password: ${{ secrets.GHTOKEN }}
 
       - name: Build the Docker images
-        run: docker buildx build --push --tag=${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:$(basename ${GITHUB_REF}) \ --tag=${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:latest ./
+        run: docker buildx build --push --tag=${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:$(basename ${GITHUB_REF}) --tag=${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:latest ./
